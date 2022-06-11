@@ -30,19 +30,19 @@ const { User, Task, Log } = require("./models");
 
 // run();
 
-const run2 = async () => {
-  try {
-    const todo = await Task.bulkCreate([
-      { title: "math", completed: false, priority: "1", userId: 1 },
-      { title: "english", completed: true, priority: "2", userId: 1 },
-    ]);
-    console.log(JSON.stringify(Task, null, 2));
-  } catch (err) {
-    console.log(err);
-  }
-};
+// const run2 = async () => {
+//   try {
+//     const todo = await Task.bulkCreate([
+//       { title: "math", completed: false, priority: "1", userId: 1 },
+//       { title: "english", completed: true, priority: "2", userId: 1 },
+//     ]);
+//     console.log(JSON.stringify(Task, null, 2));
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
-run2();
+// run2();
 
 // const timeSpan2 = new Date();
 // const second = +timeSpan2.getSeconds();

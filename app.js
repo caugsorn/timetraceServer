@@ -6,6 +6,10 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 const userRoute = require("./routes/userRoutes");
+const homeRoute = require('./routes/logRoutes')
+const taskRoute = require('./routes/taskRoutes')
+const logRoute = require('./routes/logRoutes')
+
 
 const notFoundMiddleWare = require("./middlewares/notFound");
 const errorMiddleWare = require("./middlewares/error");
@@ -16,7 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/users", userRoute);
-// app.use("/logs");
+app.use("/logs", logRoute);
+app.use("/task", taskRoute)
 // app.use("/reports");
 
 app.use(notFoundMiddleWare);
