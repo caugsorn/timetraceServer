@@ -22,6 +22,8 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
+      week: DataTypes.INTEGER,
+
     },
     { underscored: true }
   );

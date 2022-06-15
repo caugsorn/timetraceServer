@@ -6,9 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: "Untitled...",
-        validate: {
-          notEmpty: true,
-        },
+        
       },
       timeStart: {
         type: DataTypes.DATE,
@@ -22,8 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       timeSpan: { type: DataTypes.INTEGER },
       day: {
-        type: DataTypes.ENUM("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"),
+        type: DataTypes.ENUM("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"),
       },
+      week: {
+        type: DataTypes.INTEGER
+      }
     },
     { underscored: true, paranoid: true }
   );

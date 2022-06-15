@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/users", userRoute);
 app.use("/logs", logRoute);
-app.use("/task", taskRoute)
+app.use("/tasks", taskRoute)
 // app.use("/reports");
 
 app.use(notFoundMiddleWare);
