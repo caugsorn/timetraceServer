@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         
       },
       timeStart: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: { notEmpty: true },
       },
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       week: {
         type: DataTypes.INTEGER
-      }
+      },
     },
     { underscored: true, paranoid: true }
   );
