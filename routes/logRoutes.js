@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const logController = require('../controllers/logControllers')
+const logController = require("../controllers/logControllers");
+const getUserId = require("../middlewares/getUserId");
 
 // router.get("/");
-router.post('/',logController.logTime)
-router.get('/:weekId', logController.getLog)
-router.get('/home/category', logController.getLogByCategory)
-router.get('/analytics/sum', logController.getSum)
-router.get('/analytics/average', logController.compareToAverage)
-router.get('/graph/average', logController.graphAverage)
-router.get('/graph/category', logController.graphCategory)
-
+router.post("/", getUserId, logController.logTime);
+router.get("/:weekId", getUserId, logController.getLog);
+router.get("/home/category", getUserId, logController.getLogByCategory);
+router.get("/analytics/sum", getUserId, logController.getSum);
+router.get("/analytics/average", getUserId, logController.compareToAverage);
+router.get("/graph/average", getUserId, logController.graphAverage);
+router.get("/graph/category", getUserId, logController.graphCategory);
 
 module.exports = router;

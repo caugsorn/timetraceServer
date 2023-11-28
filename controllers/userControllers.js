@@ -26,8 +26,9 @@ exports.authorization = async (req, res, next) => {
     createError("user not found", 400);
   }
   req.user = user;
+  res.status(200).json({ user });
+  res.json({ token: token });
   next();
-  // res.status(200).json({ user });
 };
 
 exports.register = async (req, res, next) => {
@@ -120,8 +121,6 @@ exports.updateUser = async (req, res, next) => {
       }
       hashedPassword = await bcrypt.hash(newPassword, "10");
     }
-    console.log(email + "###############################");
-
     const result = await User.update(
       {
         email,

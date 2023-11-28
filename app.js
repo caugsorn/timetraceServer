@@ -13,6 +13,7 @@ const logRoute = require('./routes/logRoutes')
 
 const notFoundMiddleWare = require("./middlewares/notFound");
 const errorMiddleWare = require("./middlewares/error");
+const getUserId = require("./middlewares/getUserId");
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/users", userRoute);
+app.use(getUserId)
 app.use("/logs", logRoute);
 app.use("/tasks", taskRoute)
 // app.use("/reports");
