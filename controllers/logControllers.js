@@ -4,7 +4,6 @@ const db = require("../models");
 const { sequelize, Log } = require("../models");
 
 const createError = require("../util/createError");
-const week = DateTime.local().weekNumber;
 
 exports.logTime = async (req, res, next) => {
   const { timeStart, timeEnd, category, timeSpan, day, week, date } = req.body;
@@ -34,10 +33,7 @@ exports.logTime = async (req, res, next) => {
   if (timeSpan < 1) {
     createError("Duration must be longer than 1 second", 401);
   }
-  console.log("timePannnnn", timeSpan);
   const result = category === null ? "Untitled..." : category;
-  console.log("before change");
-  console.log(result);
   const log = await Log.create({
     category,
     timeStart: timeStart,
@@ -52,12 +48,11 @@ exports.logTime = async (req, res, next) => {
 };
 
 exports.getSum = async (req, res, next) => {
-  console.log("get summmmmmmmmmmmmm");
+  const week = DateTime.now().weekNumber;
   const id = req.userId;
   const sum = await Log.sum("time_span", {
-    where: { week: { [Op.like]: `${week}` }, user_id: id },
+    where: { week: `${week}`, user_id: id },
   });
-  console.log("eerwewerrwewrewrew", sum);
 
   res.status(201).json({ sum });
 };
@@ -66,7 +61,7 @@ exports.compareToAverage = async (req, res, next) => {
   const id = req.userId;
   const sumTotal = await Log.sum(
     "time_span",
-    { where: { week: { [Op.ne]: null } }, user_id: id },
+    { where: { week: { [Op.ne]: null }, user_id: id } },
     { group: "week" }
   );
   const countWeek = await Log.findAll({
@@ -76,21 +71,32 @@ exports.compareToAverage = async (req, res, next) => {
   });
 
   const average = sumTotal / countWeek.length;
-  console.log(average, countWeek.length);
 
+  const week = DateTime.now().weekNumber;
   const sumWeek = await Log.sum("time_span", {
     group: "week",
-    where: { week: { [Op.like]: `${week}` }, user_id: req.userId },
+    where: { week: { [Op.like]: `${week}` }, user_id: id },
   });
   const averageCompared = (sumWeek / average) * 100;
-
+  console.log(
+    "avg:",
+    average,
+    "sumT",
+    sumTotal,
+    "countWeek",
+    countWeek.length,
+    "sumweek",
+    sumWeek,
+    "avgC:",
+    averageCompared
+  );
   res.status(201).json({ averageCompared, average });
 };
-//เช็คลอจิค น่าจะผิด
 
 exports.graphAverage = async (req, res, next) => {
   const id = req.userId;
   // const weekDay = [MON, TUE, WED, THU, FRI, SAT, SUN]
+  const week = DateTime.now().weekNumber;
   const queryAverageWeek =
     "SELECT day, AVG(time_span) AS sum FROM Timetrace.logs  WHERE user_id = '" +
     id +
@@ -101,7 +107,7 @@ exports.graphAverage = async (req, res, next) => {
     { raw: true }
   );
 
-  const queryWeek = `SELECT day, SUM(time_span) AS sum FROM Timetrace.logs WHERE week LIKE '${week}' AND user_id = '${id}'GROUP BY day ORDER BY day`;
+  const queryWeek = `SELECT day, SUM(time_span) AS sum FROM Timetrace.logs WHERE week LIKE '${week}' AND user_id = '${id}' GROUP BY day ORDER BY day`;
   const thisWeekData = await Log.sequelize.query(
     queryWeek,
     { type: QueryTypes.SELECT },
@@ -133,7 +139,8 @@ exports.graphAverage = async (req, res, next) => {
 
 exports.graphCategory = async (req, res, next) => {
   const id = req.userId;
-  const queryCategory = `SELECT category, SUM(time_span) AS sum FROM Timetrace.logs WHERE week LIKE '${week}' AND user_id = '${id}' GROUP BY category;`;
+  const week = DateTime.now().weekNumber;
+  const queryCategory = `SELECT category, SUM(time_span) AS sum FROM Timetrace.logs WHERE week LIKE '${week}' AND user_id = '${id}' GROUP BY category ORDER BY sum(time_span) DESC;`;
   const categoryData = await Log.sequelize.query(
     queryCategory,
     { type: QueryTypes.SELECT },
@@ -171,18 +178,21 @@ exports.getLog = async (req, res, next) => {
 
 exports.getLogByCategory = async (req, res, next) => {
   const id = req.userId;
-  const query = `SELECT category, time_start, time_end, time_span, id,day, week, concat(day,week) as col FROM Timetrace.logs WHERE user_id =  '${id}'  GROUP BY category;`;
-  const log = await Log.sequelize.query(
+  const query = `SELECT distinct category, time_start, time_end, time_span, id,day, week, concat(day,week) as col FROM Timetrace.logs WHERE user_id =  '${id}'  Order by time_end Desc;`;
+  const logs = await Log.sequelize.query(
     query,
     { type: QueryTypes.SELECT },
     { raw: true }
   );
-  const logGroupbyCategory = log.reduce((acc, cur) => {
+  const logGroupbyCategory = logs.reduce((acc, cur) => {
     if (!acc[cur.category]) {
       acc[cur.category] = [];
     }
     acc[cur.category].push(cur);
     return acc;
   }, {});
-  console.log(logGroupbyCategory);
+
+  res.status(201).json({ logGroupbyCategory });
+
+  //   console.log("333343342234", logGroupbyCategory);
 };
